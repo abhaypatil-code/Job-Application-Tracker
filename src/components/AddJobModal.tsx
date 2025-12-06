@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { X } from 'lucide-react';
+import { X, Paperclip } from 'lucide-react';
 import { useJobs } from '../hooks/useJobs';
-import type { JobStatus } from '../types';
+import type { Attachment, JobStatus } from '../types';
+import { saveFile } from '../utils/fileStorage';
 
 interface AddJobModalProps {
   isOpen: boolean;
@@ -10,6 +11,11 @@ interface AddJobModalProps {
 
 const AddJobModal = ({ isOpen, onClose }: AddJobModalProps) => {
   const { addJob } = useJobs();
+  const [isUploading, setIsUploading] = useState(false);
+  const [pendingAttachments, setPendingAttachments] = useState<Attachment[]>(
+    []
+  );
+
   const [formData, setFormData] = useState({
     company: '',
     position: '',
@@ -23,12 +29,51 @@ const AddJobModal = ({ isOpen, onClose }: AddJobModalProps) => {
 
   if (!isOpen) return null;
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setIsUploading(true);
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (file.size > 5 * 1024 * 1024) {
+          alert(`File ${file.name} is too large. Max size is 5MB.`);
+          continue;
+        }
+
+        const storageId = await saveFile(file);
+        const newAttachment: Attachment = {
+          id: crypto.randomUUID(),
+          storageId,
+          name: file.name,
+          type: file.type,
+          size: file.size,
+          uploadedAt: new Date().toISOString(),
+        };
+
+        setPendingAttachments((prev) => [...prev, newAttachment]);
+      }
+    } catch (error) {
+      console.error(error);
+      alert('Failed to upload file');
+    } finally {
+      setIsUploading(false);
+      e.target.value = '';
+    }
+  };
+
+  const removePendingAttachment = (id: string) => {
+    setPendingAttachments((prev) => prev.filter((a) => a.id !== id));
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     addJob({
       ...formData,
       dateApplied: new Date(formData.dateApplied).toISOString(),
       rounds: [],
+      attachments: pendingAttachments,
     });
     onClose();
     setFormData({
@@ -41,12 +86,13 @@ const AddJobModal = ({ isOpen, onClose }: AddJobModalProps) => {
       jobUrl: '',
       description: '',
     });
+    setPendingAttachments([]);
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className="bg-surface border border-white/10 rounded-2xl w-full max-w-lg shadow-2xl animate-in fade-in zoom-in duration-200">
-        <div className="flex justify-between items-center p-6 border-b border-white/10">
+      <div className="bg-surface border border-white/10 rounded-2xl w-full max-w-lg shadow-2xl animate-in fade-in zoom-in duration-200 max-h-[90vh] overflow-y-auto">
+        <div className="flex justify-between items-center p-6 border-b border-white/10 sticky top-0 bg-surface z-10">
           <h2 className="text-xl font-bold text-white">Add New Job</h2>
           <button
             onClick={onClose}
@@ -192,7 +238,55 @@ const AddJobModal = ({ isOpen, onClose }: AddJobModalProps) => {
             />
           </div>
 
-          <div className="flex justify-end gap-3 pt-4">
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-medium text-text-secondary uppercase">
+                Attachments
+              </label>
+              <div className="relative">
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*,.pdf"
+                  onChange={handleFileUpload}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  disabled={isUploading}
+                />
+                <button
+                  type="button"
+                  disabled={isUploading}
+                  className="text-xs text-primary hover:underline flex items-center gap-1"
+                >
+                  <Paperclip className="w-3 h-3" />
+                  Add File
+                </button>
+              </div>
+            </div>
+
+            {pendingAttachments.length > 0 && (
+              <div className="space-y-2">
+                {pendingAttachments.map((file) => (
+                  <div
+                    key={file.id}
+                    className="flex items-center justify-between p-2 bg-white/5 rounded-lg border border-white/10"
+                  >
+                    <span className="text-sm text-text-secondary truncate max-w-[200px]">
+                      {file.name}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => removePendingAttachment(file.id)}
+                      className="text-text-muted hover:text-red-500 transition-colors"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="flex justify-end gap-3 pt-4 border-t border-white/10">
             <button
               type="button"
               onClick={onClose}
@@ -202,9 +296,10 @@ const AddJobModal = ({ isOpen, onClose }: AddJobModalProps) => {
             </button>
             <button
               type="submit"
-              className="px-6 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg font-medium transition-colors"
+              disabled={isUploading}
+              className="px-6 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
             >
-              Add Job
+              {isUploading ? 'Uploading...' : 'Add Job'}
             </button>
           </div>
         </form>

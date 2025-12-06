@@ -4,6 +4,7 @@ import type {
   JobContextType,
   JobStatus,
   InterviewRound,
+  Attachment,
 } from '../types';
 
 const JobContext = createContext<JobContextType | undefined>(undefined);
@@ -28,6 +29,7 @@ export const JobProvider: React.FC<{ children: React.ReactNode }> = ({
     const newJob: JobApplication = {
       ...job,
       id: crypto.randomUUID(),
+      attachments: job.attachments || [],
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -61,10 +63,10 @@ export const JobProvider: React.FC<{ children: React.ReactNode }> = ({
       prev.map((job) =>
         job.id === jobId
           ? {
-              ...job,
-              rounds: [...job.rounds, newRound],
-              updatedAt: new Date().toISOString(),
-            }
+            ...job,
+            rounds: [...job.rounds, newRound],
+            updatedAt: new Date().toISOString(),
+          }
           : job
       )
     );
@@ -79,12 +81,12 @@ export const JobProvider: React.FC<{ children: React.ReactNode }> = ({
       prev.map((job) =>
         job.id === jobId
           ? {
-              ...job,
-              rounds: job.rounds.map((r) =>
-                r.id === roundId ? { ...r, ...updates } : r
-              ),
-              updatedAt: new Date().toISOString(),
-            }
+            ...job,
+            rounds: job.rounds.map((r) =>
+              r.id === roundId ? { ...r, ...updates } : r
+            ),
+            updatedAt: new Date().toISOString(),
+          }
           : job
       )
     );
@@ -95,10 +97,40 @@ export const JobProvider: React.FC<{ children: React.ReactNode }> = ({
       prev.map((job) =>
         job.id === jobId
           ? {
-              ...job,
-              rounds: job.rounds.filter((r) => r.id !== roundId),
-              updatedAt: new Date().toISOString(),
-            }
+            ...job,
+            rounds: job.rounds.filter((r) => r.id !== roundId),
+            updatedAt: new Date().toISOString(),
+          }
+          : job
+      )
+    );
+  };
+
+  const addAttachment = (jobId: string, attachment: Attachment) => {
+    setJobs((prev) =>
+      prev.map((job) =>
+        job.id === jobId
+          ? {
+            ...job,
+            attachments: [...(job.attachments || []), attachment],
+            updatedAt: new Date().toISOString(),
+          }
+          : job
+      )
+    );
+  };
+
+  const deleteAttachment = (jobId: string, attachmentId: string) => {
+    setJobs((prev) =>
+      prev.map((job) =>
+        job.id === jobId
+          ? {
+            ...job,
+            attachments: (job.attachments || []).filter(
+              (a) => a.id !== attachmentId
+            ),
+            updatedAt: new Date().toISOString(),
+          }
           : job
       )
     );
@@ -115,6 +147,8 @@ export const JobProvider: React.FC<{ children: React.ReactNode }> = ({
         addRound,
         updateRound,
         deleteRound,
+        addAttachment,
+        deleteAttachment,
       }}
     >
       {children}

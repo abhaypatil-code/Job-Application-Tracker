@@ -96,51 +96,96 @@ const Dashboard = () => {
         />
       </div>
 
-      <div className="space-y-6">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <Clock className="w-5 h-5 text-primary" />
-          Upcoming Interviews
-        </h2>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Upcoming Interviews Widget */}
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+              <Clock className="w-5 h-5 text-primary" />
+              Upcoming Interviews
+            </h2>
+            <Link
+              to="/interviews"
+              className="text-sm text-text-secondary hover:text-white transition-colors"
+            >
+              View All
+            </Link>
+          </div>
 
-        {upcomingRounds.length > 0 ? (
-          <div className="space-y-4">
-            {upcomingRounds.map((round) => (
-              <Link
-                key={round.id}
-                to={`/jobs/${round.jobId}`}
-                className="glass-panel p-4 rounded-xl flex items-center justify-between group hover:bg-white/5 transition-colors"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-lg bg-surface flex flex-col items-center justify-center border border-white/5">
-                    <span className="text-xs text-text-muted font-medium uppercase">
-                      {format(parseISO(round.date), 'MMM')}
-                    </span>
-                    <span className="text-lg font-bold text-white">
-                      {format(parseISO(round.date), 'dd')}
-                    </span>
+          {upcomingRounds.length > 0 ? (
+            <div className="space-y-4">
+              {upcomingRounds.map((round) => (
+                <Link
+                  key={round.id}
+                  to={`/jobs/${round.jobId}`}
+                  className="glass-panel p-4 rounded-xl flex items-center justify-between group hover:bg-white/5 transition-colors"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-lg bg-surface flex flex-col items-center justify-center border border-white/5">
+                      <span className="text-xs text-text-muted font-medium uppercase">
+                        {format(parseISO(round.date), 'MMM')}
+                      </span>
+                      <span className="text-lg font-bold text-white">
+                        {format(parseISO(round.date), 'dd')}
+                      </span>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-white group-hover:text-primary transition-colors">
+                        {round.company}
+                      </h4>
+                      <p className="text-sm text-text-secondary">
+                        {round.type} • {format(parseISO(round.date), 'h:mm a')}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="font-semibold text-white group-hover:text-primary transition-colors">
-                      {round.company}
-                    </h4>
-                    <p className="text-sm text-text-secondary">
-                      {round.type} • {format(parseISO(round.date), 'h:mm a')}
-                    </p>
+                  <div className="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                    {format(parseISO(round.date), 'EEEE')}
                   </div>
-                </div>
-                <div className="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">
-                  {format(parseISO(round.date), 'EEEE')}
-                </div>
-              </Link>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="glass-panel p-8 rounded-xl text-center">
+              <p className="text-text-secondary">
+                No upcoming interviews scheduled.
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Tasks Widget */}
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+              <CheckCircle className="w-5 h-5 text-success" />
+              Pending Tasks
+            </h2>
+            <Link
+              to="/tasks"
+              className="text-sm text-text-secondary hover:text-white transition-colors"
+            >
+              View All
+            </Link>
+          </div>
+
+          <div className="glass-panel p-6 rounded-xl space-y-4">
+            <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+              <span className="text-text-secondary">Pending Tasks</span>
+              <span className="text-2xl font-bold text-white">{jobs.flatMap(j => j.rounds.flatMap(r => r.todos)).filter(t => !t.completed).length}</span>
+            </div>
+
+            {jobs.flatMap(j => j.rounds.flatMap(r => r.todos)).filter(t => !t.completed).slice(0, 3).map((task) => (
+              <div key={task.id} className="flex items-center gap-3 p-3 hover:bg-white/5 rounded-lg transition-colors">
+                <div className="w-2 h-2 rounded-full bg-primary flex-shrink-0" />
+                <span className="text-sm text-text-secondary truncate flex-1">{task.text || "Untitled Task"}</span>
+              </div>
             ))}
+
+            {jobs.flatMap(j => j.rounds.flatMap(r => r.todos)).filter(t => !t.completed).length === 0 && (
+              <p className="text-center text-text-secondary py-4">No pending tasks.</p>
+            )}
           </div>
-        ) : (
-          <div className="glass-panel p-8 rounded-xl text-center">
-            <p className="text-text-secondary">
-              No upcoming interviews scheduled.
-            </p>
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );

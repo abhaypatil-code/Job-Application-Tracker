@@ -1,7 +1,7 @@
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
-import { Calendar, MapPin, Trash2 } from 'lucide-react';
-import { format, parseISO } from 'date-fns';
+import { Calendar, MapPin, Trash2, Clock, CheckSquare } from 'lucide-react';
+import { format, parseISO, isAfter } from 'date-fns';
 import { Link } from 'react-router-dom';
 import type { JobApplication } from '../types';
 import { useJobs } from '../hooks/useJobs';
@@ -18,10 +18,17 @@ const JobCard = ({ job }: JobCardProps) => {
       data: { job },
     });
 
+  const nextInterview = job.rounds
+    .filter((r) => !r.completed && isAfter(parseISO(r.date), new Date()))
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0];
+
+  const pendingTasks = job.rounds.reduce(
+    (acc, round) => acc + round.todos.filter((t) => !t.completed).length,
+    0
+  );
+
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent navigation/drag
-    // We need to prevent the drag start if we click delete.
-    // Actually, pointer-events on the button should handle it, but let's be safe.
     if (confirm('Are you sure you want to delete this job?')) {
       deleteJob(job.id);
     }
@@ -67,7 +74,7 @@ const JobCard = ({ job }: JobCardProps) => {
         {job.company}
       </p>
 
-      <div className="space-y-2">
+      <div className="space-y-3">
         {job.location && (
           <div className="flex items-center gap-2 text-xs text-text-muted">
             <MapPin className="w-3 h-3" />
@@ -84,6 +91,28 @@ const JobCard = ({ job }: JobCardProps) => {
           <Calendar className="w-3 h-3" />
           <span>Applied {format(parseISO(job.dateApplied), 'MMM d')}</span>
         </div>
+
+        {/* Quick Stats */}
+        {(nextInterview || pendingTasks > 0) && (
+          <div className="pt-3 mt-3 border-t border-white/5 space-y-2">
+            {nextInterview && (
+              <div className="flex items-center gap-2 text-xs text-primary font-medium">
+                <Clock className="w-3 h-3" />
+                <span>
+                  {nextInterview.type}: {format(parseISO(nextInterview.date), 'MMM d')}
+                </span>
+              </div>
+            )}
+            {pendingTasks > 0 && (
+              <div className="flex items-center gap-2 text-xs text-amber-400 font-medium">
+                <CheckSquare className="w-3 h-3" />
+                <span>
+                  {pendingTasks} Task{pendingTasks > 1 ? 's' : ''} Pending
+                </span>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

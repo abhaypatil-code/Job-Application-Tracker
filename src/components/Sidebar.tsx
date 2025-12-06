@@ -1,11 +1,13 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, KanbanSquare, PlusCircle } from 'lucide-react';
+import { LayoutDashboard, KanbanSquare, PlusCircle, Clock, CheckSquare } from 'lucide-react';
 import clsx from 'clsx';
 
 const Sidebar = ({ onAddClick }: { onAddClick: () => void }) => {
   const navItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
-    { icon: KanbanSquare, label: 'Board', path: '/board' },
+    { icon: KanbanSquare, label: 'Applications', path: '/board' },
+    { icon: Clock, label: 'Interviews', path: '/interviews' },
+    { icon: CheckSquare, label: 'Tasks', path: '/tasks' },
   ];
 
   return (

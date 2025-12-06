@@ -14,16 +14,25 @@ import {
 import { format, parseISO } from 'date-fns';
 import clsx from 'clsx';
 import type { InterviewRound, Todo, JobStatus } from '../types';
+import AttachmentList from '../components/AttachmentList';
 
 const JobDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { jobs, updateJob, deleteJob, addRound, updateRound, deleteRound } =
-    useJobs();
+  const {
+    jobs,
+    updateJob,
+    deleteJob,
+    addRound,
+    updateRound,
+    deleteRound,
+    addAttachment,
+    deleteAttachment,
+  } = useJobs();
   const job = jobs.find((j) => j.id === id);
 
   const [activeTab, setActiveTab] = useState<
-    'overview' | 'rounds' | 'reflections'
+    'overview' | 'rounds' | 'reflections' | 'attachments'
   >('overview');
 
   if (!job) {
@@ -100,15 +109,17 @@ const JobDetails = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-white/10">
-        {['overview', 'rounds', 'reflections'].map((tab) => (
+      <div className="flex border-b border-white/10 overflow-x-auto">
+        {['overview', 'rounds', 'reflections', 'attachments'].map((tab) => (
           <button
             key={tab}
             onClick={() =>
-              setActiveTab(tab as 'overview' | 'rounds' | 'reflections')
+              setActiveTab(
+                tab as 'overview' | 'rounds' | 'reflections' | 'attachments'
+              )
             }
             className={clsx(
-              'px-6 py-3 text-sm font-medium capitalize transition-colors relative',
+              'px-6 py-3 text-sm font-medium capitalize transition-colors relative whitespace-nowrap',
               activeTab === tab
                 ? 'text-primary'
                 : 'text-text-secondary hover:text-white'
@@ -243,6 +254,14 @@ const JobDetails = () => {
               />
             </div>
           </div>
+        )}
+
+        {activeTab === 'attachments' && (
+          <AttachmentList
+            attachments={job.attachments || []}
+            onAdd={(attachment) => addAttachment(job.id, attachment)}
+            onDelete={(attachmentId) => deleteAttachment(job.id, attachmentId)}
+          />
         )}
       </div>
     </div>

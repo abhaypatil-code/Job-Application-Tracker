@@ -28,6 +28,15 @@ export interface InterviewRound {
   completed: boolean;
 }
 
+export interface Attachment {
+  id: string;
+  storageId: string;
+  name: string;
+  type: string;
+  size: number;
+  uploadedAt: string;
+}
+
 export interface JobApplication {
   id: string;
   company: string;
@@ -41,6 +50,7 @@ export interface JobApplication {
   rounds: InterviewRound[];
   rejectionReason?: string;
   learnings?: string;
+  attachments: Attachment[];
   createdAt: string;
   updatedAt: string;
 }
@@ -58,4 +68,6 @@ export interface JobContextType {
     updates: Partial<InterviewRound>
   ) => void;
   deleteRound: (jobId: string, roundId: string) => void;
+  addAttachment: (jobId: string, attachment: Attachment) => void;
+  deleteAttachment: (jobId: string, attachmentId: string) => void;
 }
