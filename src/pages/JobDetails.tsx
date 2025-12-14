@@ -13,8 +13,9 @@ import {
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import clsx from 'clsx';
-import type { InterviewRound, Todo, JobStatus } from '../types';
+import type { InterviewRound, Todo, JobStatus, RejectionStage } from '../types';
 import AttachmentList from '../components/AttachmentList';
+import RejectionProgressBar from '../components/RejectionProgressBar';
 
 const JobDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -229,6 +230,36 @@ const JobDetails = () => {
 
         {activeTab === 'reflections' && (
           <div className="space-y-6">
+            {/* Rejection Stage Progress */}
+            <div className="glass-panel p-6 rounded-xl space-y-4">
+              <h3 className="text-lg font-semibold text-white">
+                Rejection Stage
+              </h3>
+              <p className="text-sm text-text-secondary mb-3">
+                How far did you progress before being rejected?
+              </p>
+              <select
+                value={job.rejectionStage || ''}
+                onChange={(e) =>
+                  updateJob(job.id, {
+                    rejectionStage: (e.target.value || undefined) as RejectionStage | undefined,
+                  })
+                }
+                className="w-full bg-surface border border-white/10 rounded-lg px-3 py-2 text-white focus:border-primary outline-none mb-4"
+              >
+                <option value="">Select stage...</option>
+                <option value="Shortlisting">Shortlisting</option>
+                <option value="Online Assessment">Online Assessment</option>
+                <option value="Technical Interview">Technical Interview</option>
+                <option value="HR Interview">HR Interview</option>
+              </select>
+              {job.rejectionStage && (
+                <div className="pt-4 border-t border-white/10">
+                  <RejectionProgressBar stage={job.rejectionStage} />
+                </div>
+              )}
+            </div>
+
             <div className="glass-panel p-6 rounded-xl space-y-4">
               <h3 className="text-lg font-semibold text-white">
                 Rejection Reason

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useJobs } from '../hooks/useJobs';
-import { Briefcase, Calendar, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { Briefcase, Calendar, CheckCircle, XCircle, Clock, TrendingUp } from 'lucide-react';
 import { format, isAfter, parseISO } from 'date-fns';
 import { Link } from 'react-router-dom';
 
@@ -8,22 +8,25 @@ const StatCard = ({
   title,
   value,
   icon: Icon,
-  color,
+  gradient,
 }: {
   title: string;
   value: number;
   icon: React.ElementType;
-  color: string;
+  gradient: string;
 }) => (
-  <div className="glass-panel p-6 rounded-2xl card-hover flex items-center justify-between">
-    <div>
+  <div className="glass-panel p-6 rounded-2xl card-hover flex items-center justify-between overflow-hidden relative group">
+    {/* Background Glow */}
+    <div className={`absolute -top-10 -right-10 w-32 h-32 rounded-full blur-3xl opacity-20 group-hover:opacity-30 transition-opacity ${gradient}`} />
+
+    <div className="relative z-10">
       <p className="text-text-secondary text-sm font-medium mb-1">{title}</p>
-      <h3 className="text-3xl font-bold text-white">{value}</h3>
+      <h3 className="text-4xl font-bold text-white">{value}</h3>
     </div>
     <div
-      className={`w-12 h-12 rounded-xl flex items-center justify-center ${color}`}
+      className={`relative z-10 w-14 h-14 rounded-2xl flex items-center justify-center bg-gradient-to-br ${gradient} shadow-lg`}
     >
-      <Icon className="w-6 h-6 text-white" />
+      <Icon className="w-7 h-7 text-white" />
     </div>
   </div>
 );
@@ -51,7 +54,7 @@ const Dashboard = () => {
     .slice(0, 5);
 
   const quotes = [
-    'Don’t quit.',
+    "Don't quit.",
     'One offer is all it takes.',
     'Keep going — success is closer than you think.',
     'Every rejection is a redirection.',
@@ -64,35 +67,40 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-8">
+      {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-white mb-2">Dashboard</h1>
-        <p className="text-text-secondary text-lg italic">"{randomQuote}"</p>
+        <div className="flex items-center gap-3 mb-2">
+          <TrendingUp className="w-8 h-8 text-primary" />
+          <h1 className="text-3xl font-bold text-white">Dashboard</h1>
+        </div>
+        <p className="text-text-secondary text-lg italic pl-11">"{randomQuote}"</p>
       </div>
 
+      {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
           title="Total Applied"
           value={stats.total}
           icon={Briefcase}
-          color="bg-blue-500"
+          gradient="from-blue-500 to-cyan-400"
         />
         <StatCard
           title="Interviews"
           value={stats.interviews}
           icon={Calendar}
-          color="bg-purple-500"
+          gradient="from-violet-500 to-purple-400"
         />
         <StatCard
           title="Offers"
           value={stats.offers}
           icon={CheckCircle}
-          color="bg-emerald-500"
+          gradient="from-emerald-500 to-teal-400"
         />
         <StatCard
           title="Rejected"
           value={stats.rejected}
           icon={XCircle}
-          color="bg-red-500"
+          gradient="from-rose-500 to-pink-400"
         />
       </div>
 

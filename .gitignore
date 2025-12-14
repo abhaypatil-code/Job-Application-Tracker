@@ -1,5 +1,35 @@
+# ========================
+# Dependencies
+# ========================
+node_modules/
+.pnpm-store/
+
+# ========================
+# Build Output
+# ========================
+dist/
+dist-ssr/
+build/
+out/
+*.local
+
+# ========================
+# Vite & Cache
+# ========================
+.vite/
+*.tsbuildinfo
+
+# ========================
+# Environment Variables
+# ========================
+.env
+.env.*
+!.env.example
+
+# ========================
 # Logs
-logs
+# ========================
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -7,42 +37,75 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# Dependencies
-node_modules
-.pnpm-store
+# ========================
+# Testing & Coverage
+# ========================
+coverage/
+.nyc_output/
 
-# Build
-dist
-dist-ssr
-build
-out
-
-# Editor directories and files
+# ========================
+# Editor & IDE
+# ========================
 .vscode/*
 !.vscode/extensions.json
-.idea
-.DS_Store
+!.vscode/settings.json
+.idea/
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+*.code-workspace
 
-# Environment variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Testing
-coverage
-
-# TypeScript
-*.tsbuildinfo
-
+# ========================
+# OS Generated Files
+# ========================
 # Windows
 Thumbs.db
 Desktop.ini
 $RECYCLE.BIN/
+*.lnk
 
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+
+# ========================
+# Temporary & Backup Files
+# ========================
+*.tmp
+*.temp
+*.bak
+*.backup
+*.swp
+*~
+
+# ========================
+# Local Data & Databases
+# ========================
+*.db
+*.sqlite
+*.sqlite3
+data/
+local-data/
+
+# ========================
+# Personal Notes (Optional)
+# ========================
+notes/
+scratch/
+TODO.local.md
+
+# ========================
+# Lint & Debug Output
+# ========================
+lint_output.txt
+debug.log

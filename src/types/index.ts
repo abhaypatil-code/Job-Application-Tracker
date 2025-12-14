@@ -13,6 +13,12 @@ export type InterviewType =
   | 'HR'
   | 'Other';
 
+export type RejectionStage =
+  | 'Shortlisting'
+  | 'Online Assessment'
+  | 'Technical Interview'
+  | 'HR Interview';
+
 export interface Todo {
   id: string;
   text: string;
@@ -49,6 +55,7 @@ export interface JobApplication {
   description?: string;
   rounds: InterviewRound[];
   rejectionReason?: string;
+  rejectionStage?: RejectionStage;
   learnings?: string;
   attachments: Attachment[];
   createdAt: string;

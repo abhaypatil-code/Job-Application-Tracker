@@ -5,6 +5,7 @@ import Board from './pages/Board';
 import Interviews from './pages/Interviews';
 import Tasks from './pages/Tasks';
 import JobDetails from './pages/JobDetails';
+import Learnings from './pages/Learnings';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="board" element={<Board />} />
         <Route path="interviews" element={<Interviews />} />
         <Route path="tasks" element={<Tasks />} />
+        <Route path="learnings" element={<Learnings />} />
         <Route path="jobs/:id" element={<JobDetails />} />
       </Route>
     </Routes>
@@ -21,3 +23,4 @@ function App() {
 }
 
 export default App;
+

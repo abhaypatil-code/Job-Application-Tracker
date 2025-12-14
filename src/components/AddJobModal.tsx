@@ -90,13 +90,13 @@ const AddJobModal = ({ isOpen, onClose }: AddJobModalProps) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className="bg-surface border border-white/10 rounded-2xl w-full max-w-lg shadow-2xl animate-in fade-in zoom-in duration-200 max-h-[90vh] overflow-y-auto">
-        <div className="flex justify-between items-center p-6 border-b border-white/10 sticky top-0 bg-surface z-10">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
+      <div className="bg-surface/95 backdrop-blur-xl border border-white/[0.08] rounded-2xl w-full max-w-lg shadow-2xl shadow-black/50 max-h-[90vh] overflow-y-auto">
+        <div className="flex justify-between items-center p-6 border-b border-white/[0.06] sticky top-0 bg-surface/95 backdrop-blur-xl z-10">
           <h2 className="text-xl font-bold text-white">Add New Job</h2>
           <button
             onClick={onClose}
-            className="text-text-secondary hover:text-white transition-colors"
+            className="p-2 text-text-secondary hover:text-white hover:bg-white/5 rounded-lg transition-all"
           >
             <X className="w-5 h-5" />
           </button>
@@ -115,7 +115,7 @@ const AddJobModal = ({ isOpen, onClose }: AddJobModalProps) => {
                 onChange={(e) =>
                   setFormData({ ...formData, company: e.target.value })
                 }
-                className="w-full bg-background border border-white/10 rounded-lg px-3 py-2 text-white focus:border-primary outline-none"
+                className="w-full bg-black/50 border border-white/[0.08] rounded-xl px-4 py-3 text-white placeholder:text-text-muted focus:border-primary/50 focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                 placeholder="e.g. Google"
               />
             </div>
@@ -286,18 +286,18 @@ const AddJobModal = ({ isOpen, onClose }: AddJobModalProps) => {
             )}
           </div>
 
-          <div className="flex justify-end gap-3 pt-4 border-t border-white/10">
+          <div className="flex justify-end gap-3 pt-4 border-t border-white/[0.06]">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-text-secondary hover:text-white transition-colors"
+              className="px-5 py-2.5 text-text-secondary hover:text-white hover:bg-white/5 rounded-xl transition-all"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isUploading}
-              className="px-6 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
+              className="px-6 py-2.5 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-medium transition-all hover:shadow-glow hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:hover:scale-100"
             >
               {isUploading ? 'Uploading...' : 'Add Job'}
             </button>

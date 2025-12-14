@@ -1,8 +1,10 @@
 import { useJobs } from '../hooks/useJobs';
 import { format, isAfter, isBefore, parseISO } from 'date-fns';
-import { Calendar, Clock, ArrowRight } from 'lucide-react';
+import { Calendar, Clock, ArrowRight, XCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import clsx from 'clsx';
+import type { RejectionStage, JobStatus } from '../types';
+import RejectionProgressBar from '../components/RejectionProgressBar';
 
 const Interviews = () => {
     const { jobs } = useJobs();
@@ -14,6 +16,8 @@ const Interviews = () => {
                 company: job.company,
                 position: job.position,
                 jobId: job.id,
+                jobStatus: job.status,
+                rejectionStage: job.rejectionStage,
             }))
         )
         .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
@@ -70,19 +74,36 @@ const Interviews = () => {
     );
 };
 
+interface InterviewRoundWithJob {
+    id: string;
+    type: string;
+    date: string;
+    company: string;
+    position: string;
+    jobId: string;
+    jobStatus: JobStatus;
+    rejectionStage?: RejectionStage;
+}
+
 const InterviewCard = ({
     round,
     isUpcoming,
 }: {
-    round: any; // Using any for simplicity in aggregation, or define a proper type intersection
+    round: InterviewRoundWithJob;
     isUpcoming?: boolean;
 }) => {
+    const isRejected = round.jobStatus === 'Rejected';
+
     return (
         <Link
             to={`/jobs/${round.jobId}`}
             className={clsx(
-                'glass-panel p-5 rounded-xl flex flex-col md:flex-row md:items-center gap-5 group hover:bg-white/5 transition-all border border-white/5',
-                isUpcoming && 'hover:border-primary/50'
+                'glass-panel p-5 rounded-xl flex flex-col md:flex-row md:items-center gap-5 group hover:bg-white/5 transition-all border',
+                isRejected
+                    ? 'border-red-500/20 hover:border-red-500/40'
+                    : isUpcoming
+                        ? 'border-white/5 hover:border-primary/50'
+                        : 'border-white/5'
             )}
         >
             {/* Date Badge */}
@@ -90,9 +111,11 @@ const InterviewCard = ({
                 <div
                     className={clsx(
                         'w-16 h-16 rounded-xl flex flex-col items-center justify-center border',
-                        isUpcoming
-                            ? 'bg-primary/10 border-primary/20 text-primary'
-                            : 'bg-surface border-white/5 text-text-secondary'
+                        isRejected
+                            ? 'bg-red-500/10 border-red-500/20 text-red-400'
+                            : isUpcoming
+                                ? 'bg-primary/10 border-primary/20 text-primary'
+                                : 'bg-surface border-white/5 text-text-secondary'
                     )}
                 >
                     <span className="text-xs font-bold uppercase">
@@ -107,9 +130,18 @@ const InterviewCard = ({
             {/* Info */}
             <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-bold text-lg text-white truncate">
+                    <h3 className={clsx(
+                        'font-bold text-lg truncate',
+                        isRejected ? 'text-red-400' : 'text-white'
+                    )}>
                         {round.company}
                     </h3>
+                    {isRejected && (
+                        <span className="flex items-center gap-1 text-xs text-red-400 bg-red-500/10 px-2 py-0.5 rounded-full">
+                            <XCircle className="w-3 h-3" />
+                            Rejected
+                        </span>
+                    )}
                     <span className="text-text-secondary">•</span>
                     <span className="text-text-secondary truncate">{round.position}</span>
                 </div>
@@ -118,7 +150,11 @@ const InterviewCard = ({
                         <span
                             className={clsx(
                                 'w-2 h-2 rounded-full',
-                                isUpcoming ? 'bg-primary' : 'bg-text-muted'
+                                isRejected
+                                    ? 'bg-red-400'
+                                    : isUpcoming
+                                        ? 'bg-primary'
+                                        : 'bg-text-muted'
                             )}
                         />
                         {round.type}
@@ -128,6 +164,13 @@ const InterviewCard = ({
                         {format(parseISO(round.date), 'h:mm a')}
                     </span>
                 </div>
+
+                {/* Rejection Progress Bar for rejected jobs */}
+                {isRejected && round.rejectionStage && (
+                    <div className="mt-3 pt-3 border-t border-white/5">
+                        <RejectionProgressBar stage={round.rejectionStage} compact />
+                    </div>
+                )}
             </div>
 
             {/* Action */}
@@ -140,3 +183,4 @@ const InterviewCard = ({
 };
 
 export default Interviews;
+
