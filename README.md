@@ -8,8 +8,6 @@
 
 A modern, feature-rich job application tracker built with React, TypeScript, and Vite. Keep track of your job applications, interview stages, and learnings—all in one place with a beautiful dark-themed UI.
 
-![Job Application Tracker](https://via.placeholder.com/800x400?text=Job+Application+Tracker+Screenshot)
-
 ---
 
 ## ✨ Features
