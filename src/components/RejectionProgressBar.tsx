@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import type { RejectionStage } from '../types';
+import type { RejectionStage } from '../../shared/types';
 
 interface RejectionProgressBarProps {
     stage?: RejectionStage;

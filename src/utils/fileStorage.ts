@@ -1,10 +1,84 @@
+// File storage utilities for handling attachments
+// Works with Electron IPC when available, falls back to IndexedDB otherwise
+
 export interface StoredFile {
-  id: string; // The storage ID
+  id: string;
   data: Blob;
   type: string;
   name: string;
   createdAt: string;
 }
+
+// Check if we're in Electron environment
+const isElectron = (): boolean => {
+  return typeof window !== 'undefined' && window.electronAPI !== undefined;
+};
+
+// ==================== Electron Implementation ====================
+
+export const saveFileElectron = async (
+  jobId: string,
+  file: File
+): Promise<{ id: string; storageId: string }> => {
+  if (!isElectron()) {
+    throw new Error('Electron API not available');
+  }
+
+  const arrayBuffer = await file.arrayBuffer();
+  const result = await window.electronAPI.attachments.save(
+    jobId,
+    arrayBuffer,
+    file.name,
+    file.type
+  );
+
+  if (!result.success || !result.data) {
+    throw new Error(result.error || 'Failed to save file');
+  }
+
+  return {
+    id: result.data.id,
+    storageId: result.data.storageId,
+  };
+};
+
+export const getFileElectron = async (
+  storageId: string
+): Promise<{ blob: Blob; name: string; type: string } | null> => {
+  if (!isElectron()) {
+    throw new Error('Electron API not available');
+  }
+
+  const result = await window.electronAPI.attachments.get(storageId);
+
+  if (!result.success || !result.data) {
+    return null;
+  }
+
+  const blob = new Blob([result.data.data], {
+    type: result.data.metadata.mimeType,
+  });
+
+  return {
+    blob,
+    name: result.data.metadata.originalName,
+    type: result.data.metadata.mimeType,
+  };
+};
+
+export const deleteFileElectron = async (attachmentId: string): Promise<void> => {
+  if (!isElectron()) {
+    throw new Error('Electron API not available');
+  }
+
+  const result = await window.electronAPI.attachments.delete(attachmentId);
+
+  if (!result.success) {
+    throw new Error(result.error || 'Failed to delete file');
+  }
+};
+
+// ==================== IndexedDB Fallback Implementation ====================
 
 const DB_NAME = 'JobTrackerStorage';
 const STORE_NAME = 'attachments';
@@ -39,6 +113,9 @@ const initDB = (): Promise<IDBDatabase> => {
 };
 
 export const saveFile = async (file: File): Promise<string> => {
+  // Use Electron if available (this is called from older code paths)
+  // New code should use saveFileElectron directly
+
   const db = await initDB();
   const id = crypto.randomUUID();
   const storedFile: StoredFile = {
@@ -60,6 +137,21 @@ export const saveFile = async (file: File): Promise<string> => {
 };
 
 export const getFile = async (id: string): Promise<StoredFile | undefined> => {
+  // Try Electron first if available
+  if (isElectron()) {
+    const result = await getFileElectron(id);
+    if (result) {
+      return {
+        id,
+        data: result.blob,
+        type: result.type,
+        name: result.name,
+        createdAt: new Date().toISOString(),
+      };
+    }
+  }
+
+  // Fallback to IndexedDB
   const db = await initDB();
   return new Promise((resolve, reject) => {
     const transaction = db.transaction([STORE_NAME], 'readonly');
@@ -80,5 +172,19 @@ export const deleteFile = async (id: string): Promise<void> => {
 
     request.onsuccess = () => resolve();
     request.onerror = () => reject('Error deleting file');
+  });
+};
+
+// ==================== Legacy Data Migration ====================
+
+export const getAllFilesFromIndexedDB = async (): Promise<StoredFile[]> => {
+  const db = await initDB();
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction([STORE_NAME], 'readonly');
+    const store = transaction.objectStore(STORE_NAME);
+    const request = store.getAll();
+
+    request.onsuccess = () => resolve(request.result || []);
+    request.onerror = () => reject('Error getting all files');
   });
 };

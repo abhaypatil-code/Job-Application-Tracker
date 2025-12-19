@@ -1,6 +1,6 @@
 import { X, Download, ExternalLink } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import type { Attachment } from '../types';
+import type { Attachment } from '../../shared/types';
 import { getFile } from '../utils/fileStorage';
 
 interface FilePreviewModalProps {

@@ -3,7 +3,7 @@ import { format, isAfter, isBefore, parseISO } from 'date-fns';
 import { Calendar, Clock, ArrowRight, XCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import clsx from 'clsx';
-import type { RejectionStage, JobStatus } from '../types';
+import type { RejectionStage, JobStatus } from '../../shared/types';
 import RejectionProgressBar from '../components/RejectionProgressBar';
 
 const Interviews = () => {

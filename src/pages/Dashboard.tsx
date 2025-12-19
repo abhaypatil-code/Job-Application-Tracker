@@ -55,10 +55,25 @@ const Dashboard = () => {
 
   const quotes = [
     "Don't quit.",
-    'One offer is all it takes.',
-    'Keep going — success is closer than you think.',
-    'Every rejection is a redirection.',
-    'Your dream job is waiting for you.',
+    "One offer is all it takes.",
+    "Keep applying.",
+    "Stay consistent.",
+    "Trust the process.",
+    "Show up daily.",
+    "Learn from every interview.",
+    "Rejection means next.",
+    "Keep moving forward.",
+    "Your time is coming.",
+    "Stay hungry.",
+    "Outwork the competition.",
+    "Every no gets you closer to yes.",
+    "Apply one more.",
+    "Stay focused.",
+    "Keep pushing.",
+    "You've got this.",
+    "Next one could be the one.",
+    "Be relentless.",
+    "Winners don't quit.",
   ];
 
   const [randomQuote] = useState(

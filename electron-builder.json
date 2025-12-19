@@ -1,0 +1,45 @@
+{
+    "appId": "com.jobtracker.app",
+    "productName": "Job Application Tracker",
+    "directories": {
+        "output": "release"
+    },
+    "files": [
+        "dist/**/*",
+        "dist-electron/**/*",
+        "electron/database/schema.sql"
+    ],
+    "extraResources": [
+        {
+            "from": "electron/database/schema.sql",
+            "to": "database/schema.sql"
+        }
+    ],
+    "win": {
+        "target": [
+            "nsis",
+            "portable"
+        ],
+        "icon": "public/vite.svg"
+    },
+    "mac": {
+        "target": [
+            "dmg",
+            "zip"
+        ],
+        "icon": "public/vite.svg"
+    },
+    "linux": {
+        "target": [
+            "AppImage",
+            "deb"
+        ],
+        "icon": "public/vite.svg"
+    },
+    "nsis": {
+        "oneClick": false,
+        "allowToChangeInstallationDirectory": true,
+        "installerIcon": "public/vite.svg",
+        "uninstallerIcon": "public/vite.svg"
+    }
+}

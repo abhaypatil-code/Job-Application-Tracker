@@ -10,7 +10,7 @@ import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import { useJobs } from '../hooks/useJobs';
 import BoardColumn from '../components/BoardColumn';
 import JobCard from '../components/JobCard';
-import type { JobApplication, JobStatus } from '../types';
+import type { JobApplication, JobStatus } from '../../shared/types';
 
 const COLUMNS: { id: JobStatus; title: string; color: string }[] = [
   { id: 'Wishlist', title: 'Wishlist', color: 'bg-slate-500' },

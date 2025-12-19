@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import clsx from 'clsx';
-import type { InterviewRound, Todo, JobStatus, RejectionStage } from '../types';
+import type { InterviewRound, Todo, JobStatus, RejectionStage } from '../../shared/types';
 import AttachmentList from '../components/AttachmentList';
 import RejectionProgressBar from '../components/RejectionProgressBar';
 
@@ -289,6 +289,7 @@ const JobDetails = () => {
 
         {activeTab === 'attachments' && (
           <AttachmentList
+            jobId={job.id}
             attachments={job.attachments || []}
             onAdd={(attachment) => addAttachment(job.id, attachment)}
             onDelete={(attachmentId) => deleteAttachment(job.id, attachmentId)}

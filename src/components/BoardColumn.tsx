@@ -1,6 +1,6 @@
 import { useDroppable } from '@dnd-kit/core';
 import JobCard from './JobCard';
-import type { JobApplication, JobStatus } from '../types';
+import type { JobApplication, JobStatus } from '../../shared/types';
 import clsx from 'clsx';
 
 interface BoardColumnProps {

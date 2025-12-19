@@ -3,7 +3,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { Calendar, MapPin, Trash2, Clock, CheckSquare, ExternalLink } from 'lucide-react';
 import { format, parseISO, isAfter } from 'date-fns';
 import { Link } from 'react-router-dom';
-import type { JobApplication } from '../types';
+import type { JobApplication } from '../../shared/types';
 import { useJobs } from '../hooks/useJobs';
 
 interface JobCardProps {

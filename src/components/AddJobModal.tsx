@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { X, Paperclip } from 'lucide-react';
 import { useJobs } from '../hooks/useJobs';
-import type { Attachment, JobStatus } from '../types';
+import type { JobStatus, Attachment } from '../../shared/types';
 import { saveFile } from '../utils/fileStorage';
 
 interface AddJobModalProps {
@@ -38,7 +38,7 @@ const AddJobModal = ({ isOpen, onClose }: AddJobModalProps) => {
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         if (file.size > 5 * 1024 * 1024) {
-          alert(`File ${file.name} is too large. Max size is 5MB.`);
+          alert(`File ${file.name} is too large.Max size is 5MB.`);
           continue;
         }
 
@@ -211,7 +211,7 @@ const AddJobModal = ({ isOpen, onClose }: AddJobModalProps) => {
 
           <div className="space-y-2">
             <label className="text-xs font-medium text-text-secondary uppercase">
-              Job Description
+              Description
             </label>
             <textarea
               value={formData.description}
@@ -219,7 +219,6 @@ const AddJobModal = ({ isOpen, onClose }: AddJobModalProps) => {
                 setFormData({ ...formData, description: e.target.value })
               }
               className="w-full h-32 bg-background border border-white/10 rounded-lg px-3 py-2 text-white focus:border-primary outline-none resize-none"
-              placeholder="Paste the job description here..."
             />
           </div>
 
@@ -228,7 +227,7 @@ const AddJobModal = ({ isOpen, onClose }: AddJobModalProps) => {
               Job URL
             </label>
             <input
-              type="url"
+              type="text"
               value={formData.jobUrl}
               onChange={(e) =>
                 setFormData({ ...formData, jobUrl: e.target.value })

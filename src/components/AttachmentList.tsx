@@ -7,17 +7,24 @@ import {
   Download,
 } from 'lucide-react';
 import { useState } from 'react';
-import type { Attachment } from '../types';
+import type { Attachment } from '../../shared/types';
 import FilePreviewModal from './FilePreviewModal';
-import { deleteFile, saveFile, getFile } from '../utils/fileStorage';
+import { deleteFile, getFile, saveFileElectron } from '../utils/fileStorage';
+
+// Check if we're in Electron environment
+const isElectron = (): boolean => {
+  return typeof window !== 'undefined' && window.electronAPI !== undefined;
+};
 
 interface AttachmentListProps {
+  jobId: string;
   attachments: Attachment[];
   onAdd: (attachment: Attachment) => void;
   onDelete: (attachmentId: string) => void;
 }
 
 const AttachmentList = ({
+  jobId,
   attachments,
   onAdd,
   onDelete,
@@ -42,18 +49,36 @@ const AttachmentList = ({
           continue;
         }
 
-        const storageId = await saveFile(file);
+        if (isElectron()) {
+          // Use Electron IPC - file is saved AND attachment metadata is created on backend
+          const result = await saveFileElectron(jobId, file);
+          // The attachment is already saved in the database by the backend,
+          // but we need to update local state
+          const newAttachment: Attachment = {
+            id: result.id,
+            storageId: result.storageId,
+            name: file.name,
+            type: file.type,
+            size: file.size,
+            uploadedAt: new Date().toISOString(),
+          };
+          onAdd(newAttachment);
+        } else {
+          // Fallback for non-Electron (development in browser)
+          // This uses IndexedDB
+          const { saveFile } = await import('../utils/fileStorage');
+          const storageId = await saveFile(file);
 
-        const newAttachment: Attachment = {
-          id: crypto.randomUUID(),
-          storageId,
-          name: file.name,
-          type: file.type,
-          size: file.size,
-          uploadedAt: new Date().toISOString(),
-        };
-
-        onAdd(newAttachment);
+          const newAttachment: Attachment = {
+            id: crypto.randomUUID(),
+            storageId,
+            name: file.name,
+            type: file.type,
+            size: file.size,
+            uploadedAt: new Date().toISOString(),
+          };
+          onAdd(newAttachment);
+        }
       }
     } catch (error) {
       console.error('Upload failed:', error);
@@ -69,7 +94,11 @@ const AttachmentList = ({
     if (!confirm(`Are you sure you want to delete ${attachment.name}?`)) return;
 
     try {
-      await deleteFile(attachment.storageId);
+      // In Electron, deleteAttachment in context handles both DB and file deletion
+      // In non-Electron, we need to manually delete from IndexedDB
+      if (!isElectron()) {
+        await deleteFile(attachment.storageId);
+      }
       onDelete(attachment.id);
     } catch (error) {
       console.error('Delete failed:', error);
@@ -89,6 +118,8 @@ const AttachmentList = ({
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
+      } else {
+        alert('File not found.');
       }
     } catch (error) {
       console.error('Download failed:', error);

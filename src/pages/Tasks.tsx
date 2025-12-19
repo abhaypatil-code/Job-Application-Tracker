@@ -2,7 +2,7 @@ import { useJobs } from '../hooks/useJobs';
 import { CheckSquare, Square, CheckCircle, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import clsx from 'clsx';
-import type { Todo } from '../types';
+import type { Todo } from '../../shared/types';
 
 const Tasks = () => {
     const { jobs, updateRound } = useJobs();
