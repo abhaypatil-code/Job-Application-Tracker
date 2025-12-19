@@ -1,6 +1,6 @@
 {
-    "appId": "com.jobtracker.app",
-    "productName": "Job Application Tracker",
+    "appId": "com.jobsuite.app",
+    "productName": "JobSuite",
     "directories": {
         "output": "release"
     },
@@ -20,14 +20,14 @@
             "nsis",
             "portable"
         ],
-        "icon": "public/vite.svg"
+        "icon": "public/app-icon.png"
     },
     "mac": {
         "target": [
             "dmg",
             "zip"
         ],
-        "icon": "public/vite.svg"
+        "icon": "public/app-icon.png"
     },
     "linux": {
         "target": [

@@ -19,7 +19,7 @@ const Sidebar = ({ onAddClick }: { onAddClick: () => void }) => {
           <KanbanSquare className="text-white w-5 h-5" />
         </div>
         <h1 className="text-xl font-bold text-white tracking-tight">
-          Job<span className="text-primary">Tracker</span>
+          Job<span className="text-primary">Suite</span>
         </h1>
       </div>
 
