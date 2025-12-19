@@ -19,8 +19,10 @@ A modern, feature-rich job application tracker built as an **Electron desktop ap
 
 - **📊 Dashboard** — Overview of your application progress with visual statistics
 - **📋 Kanban Board** — Drag-and-drop interface to manage application statuses
+- **📅 Upcoming Interviews** — View all your upcoming interviews in chronological order to stay organized
+- **✅ Round-Specific Tasks** — Create and manage to-do lists for each specific interview round and company
+- **📚 Learnings & Reflection** — Dedicated features to document experiences, reflect on performance, and improve continuously
 - **🎯 Interview Tracking** — Track interview rounds with stage progress indicators
-- **📚 Learnings Tab** — Document key learnings from each application
 - **🌙 Modern Dark UI** — Sleek glassmorphism design with smooth animations
 - **💾 SQLite Storage** — Reliable, persistent local database storage
 - **📎 File Attachments** — Attach resumes, cover letters, and notes to applications
