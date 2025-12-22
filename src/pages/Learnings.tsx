@@ -6,11 +6,9 @@ import RejectionProgressBar from '../components/RejectionProgressBar';
 const Learnings = () => {
     const { jobs } = useJobs();
 
-    // Get all rejected jobs that have learnings
-    const rejectedJobsWithLearnings = jobs.filter(
-        (job) =>
-            job.status === 'Rejected' &&
-            job.learnings?.trim()
+    // Get all jobs that have learnings
+    const jobsWithLearnings = jobs.filter(
+        (job) => job.learnings?.trim()
     );
 
     return (
@@ -22,13 +20,13 @@ const Learnings = () => {
                     <h1 className="text-3xl font-bold text-white">Learnings</h1>
                 </div>
                 <p className="text-text-secondary pl-11">
-                    Insights and takeaways from your rejected applications.
+                    Insights and takeaways from your applications.
                 </p>
             </div>
 
-            {rejectedJobsWithLearnings.length > 0 ? (
+            {jobsWithLearnings.length > 0 ? (
                 <div className="grid gap-6">
-                    {rejectedJobsWithLearnings.map((job) => (
+                    {jobsWithLearnings.map((job) => (
                         <Link
                             key={job.id}
                             to={`/jobs/${job.id}`}
@@ -78,7 +76,7 @@ const Learnings = () => {
                         No Learnings Yet
                     </h3>
                     <p className="text-text-secondary max-w-md mx-auto">
-                        When you add learnings to your rejected applications, they'll
+                        When you add learnings to your applications, they'll
                         appear here as notes for future reference.
                     </p>
                 </div>
